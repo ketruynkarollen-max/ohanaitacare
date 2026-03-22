@@ -16,6 +16,10 @@ import {
   ListChecks,
   Wallet,
   Flame,
+  TrendingUp,
+  FlaskConical,
+  BarChart2,
+  Telescope,
 } from "lucide-react"
 import clsx from "clsx"
 
@@ -35,6 +39,7 @@ const navSections = [
     items: [
       { href: "/menu", label: "Cardápio", icon: UtensilsCrossed },
       { href: "/inventory", label: "Inventário", icon: Boxes },
+      { href: "/ingredients", label: "Ingredientes", icon: FlaskConical },
       { href: "/customers", label: "Clientes", icon: Users },
       { href: "/expenses", label: "Despesas", icon: Receipt },
       { href: "/cash", label: "Caixa do dia", icon: Wallet },
@@ -44,6 +49,9 @@ const navSections = [
     label: "Análises",
     items: [
       { href: "/reports", label: "Relatórios", icon: LineChart },
+      { href: "/dre",               label: "DRE / Resultado",  icon: TrendingUp },
+      { href: "/cmv",               label: "CMV / Fichas",     icon: BarChart2 },
+      { href: "/menu-engineering",  label: "Eng. Cardápio",    icon: Telescope },
     ],
   },
 ]

@@ -99,6 +99,7 @@ model Product {
   addonGroups    AddonGroup[]
   orderItems     OrderItem[]
   stockMovements StockMovement[]
+  recipeItems    RecipeItem[]
 }
 
 model ProductVariation {
@@ -255,6 +256,61 @@ model Expense {
   date        DateTime @default(now())
   notes       String?
   createdAt   DateTime @default(now())
+}
+
+// ── Ficha Técnica / CMV ─────────────────────────────────────────────────────
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  name      String
+  unit      String   @default("un")  // kg, g, L, ml, un, pct, cx
+  unitCost  Float    @default(0)     // custo por unidade
+  category  String   @default("OTHER") // MEAT, VEGETABLE, DAIRY, GRAIN, BEVERAGE, SEASONING, PACKAGING, OTHER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipeItems RecipeItem[]
+}
+
+model RecipeItem {
+  id           String     @id @default(cuid())
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  quantity     Float      // quantidade do ingrediente por porção
+
+  @@unique([productId, ingredientId])
+}
+
+// ── Abertura / Fechamento de Caixa ───────────────────────────────────────────
+
+model CashSession {
+  id             String    @id @default(cuid())
+  date           DateTime  // dia de operação (meia-noite local)
+  status         String    @default("OPEN") // OPEN, CLOSED
+  openedAt       DateTime  @default(now())
+  closedAt       DateTime?
+
+  openingBalance Float     @default(0) // troco/saldo inicial declarado
+
+  // preenchidos ao fechar
+  totalCash      Float?    // total em dinheiro recebido nos pedidos
+  totalPix       Float?
+  totalCard      Float?
+  totalOther     Float?
+  totalOrders    Float?    // soma pedidos pagos no período
+
+  expectedCash   Float?    // openingBalance + totalCash (esperado na gaveta)
+  closingBalance Float?    // contagem física declarada pelo operador
+  difference     Float?    // closingBalance − expectedCash
+
+  notes          String?
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([date])
 }
 
 model PushSubscription {
