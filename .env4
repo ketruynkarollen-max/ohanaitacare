@@ -1,0 +1,19 @@
+# Copie este arquivo para .env e preencha os valores.
+# Nunca commite o arquivo .env no Git.
+# Local: cp .env.example .env
+
+# Banco de dados PostgreSQL (obrigatório para produção / Vercel)
+DATABASE_URL="postgresql://USUARIO:SENHA@HOST:5432/NOME_DO_BANCO?sslmode=require"
+
+# Autenticação (obrigatório em produção)
+# Gerar: openssl rand -base64 64
+JWT_SECRET=""
+
+# NextAuth (se usar; gerar: openssl rand -base64 32)
+NEXTAUTH_SECRET=""
+NEXTAUTH_URL="http://localhost:3000"
+
+# --- Vercel: Settings → Environment Variables ---
+# JWT_SECRET     — openssl rand -base64 64
+# NEXTAUTH_SECRET — openssl rand -base64 32
+# NEXTAUTH_URL   — ex: https://ohanaitacare.vercel.app (ou seu domínio)

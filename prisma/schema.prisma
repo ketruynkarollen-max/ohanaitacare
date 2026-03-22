@@ -1,0 +1,268 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // App / runtime (no Vercel pode ser o pooler Supabase com ?pgbouncer=true)
+  url       = env("DATABASE_URL")
+  // Migrações e db push: conexão direta porta 5432 (Supabase: host db.<ref>.supabase.co)
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("STAFF") // ADMIN, MANAGER, STAFF, KITCHEN
+  avatar    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+model Business {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  logo        String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  cnpj        String?
+  description String?
+  primaryColor String  @default("#ef4444")
+
+  openTime    String  @default("08:00")
+  closeTime   String  @default("23:00")
+  deliveryFee Float   @default(0)
+  minOrder    Float   @default(0)
+  deliveryTime Int    @default(45)
+
+  facebookUrl  String?
+  instagramUrl String?
+  whatsapp     String?
+
+  acceptDelivery  Boolean @default(true)
+  acceptPickup    Boolean @default(true)
+  acceptTable     Boolean @default(true)
+
+  pixKey      String?
+  acceptCash  Boolean @default(true)
+  acceptCard  Boolean @default(true)
+  acceptPix   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  position    Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  position    Int      @default(0)
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  trackStock  Boolean  @default(false)
+  stockQty    Int      @default(0)
+  alertQty    Int      @default(5)
+
+  preparationTime Int @default(15)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  variations     ProductVariation[]
+  addonGroups    AddonGroup[]
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+}
+
+model ProductVariation {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  price     Float
+  active    Boolean @default(true)
+
+  orderItems OrderItem[]
+}
+
+model AddonGroup {
+  id         String  @id @default(cuid())
+  productId  String
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name       String
+  required   Boolean @default(false)
+  minSelect  Int     @default(0)
+  maxSelect  Int     @default(1)
+  active     Boolean @default(true)
+
+  addons     Addon[]
+}
+
+model Addon {
+  id           String     @id @default(cuid())
+  addonGroupId String
+  addonGroup   AddonGroup @relation(fields: [addonGroupId], references: [id], onDelete: Cascade)
+  name         String
+  price        Float      @default(0)
+  active       Boolean    @default(true)
+
+  orderItemAddons OrderItemAddon[]
+}
+
+model Table {
+  id       String  @id @default(cuid())
+  number   Int     @unique
+  name     String?
+  capacity Int     @default(4)
+  status   String  @default("FREE") // FREE, OCCUPIED, RESERVED
+  active   Boolean @default(true)
+
+  orders Order[]
+}
+
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String?
+  email        String?
+  passwordHash String?  // login por email/senha (sem Google)
+  googleId     String?  @unique
+  address      String?
+  city         String?
+  notes        String?
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  number      Int      @unique
+  type        String   @default("TABLE") // TABLE, DELIVERY, PICKUP
+  source      String   @default("PDV")   // PDV, ONLINE
+  status      String   @default("PENDING") // PENDING, CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED
+
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+
+  tableId     String?
+  table       Table?    @relation(fields: [tableId], references: [id])
+
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+
+  subtotal    Float    @default(0)
+  discount    Float    @default(0)
+  deliveryFee Float    @default(0)
+  total       Float    @default(0)
+
+  paymentMethod String? // CASH, CARD, PIX
+  paymentStatus String  @default("PENDING") // PENDING, PAID
+
+  notes       String?
+  address     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+
+  variationId String?
+  variation   ProductVariation? @relation(fields: [variationId], references: [id])
+
+  quantity    Int     @default(1)
+  unitPrice   Float
+  notes       String?
+  status      String  @default("PENDING") // PENDING, PREPARING, READY
+
+  addons      OrderItemAddon[]
+}
+
+model OrderItemAddon {
+  id          String    @id @default(cuid())
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  addonId     String
+  addon       Addon     @relation(fields: [addonId], references: [id])
+  price       Float
+}
+
+model StockMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  type      String   // IN, OUT, ADJUSTMENT
+  quantity  Int
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        String   @default("PERCENT") // PERCENT, FIXED
+  value       Float
+  minOrder    Float    @default(0)
+  maxUses     Int?
+  usedCount   Int      @default(0)
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  category    String   @default("OTHER") // FOOD, SALARY, RENT, UTILITIES, OTHER
+  date        DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model PushSubscription {
+  id           String   @id @default(cuid())
+  endpoint     String   @unique
+  subscription String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([endpoint])
+}
