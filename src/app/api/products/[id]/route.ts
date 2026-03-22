@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de um Produto específico
  * PATCH  → atualiza o produto

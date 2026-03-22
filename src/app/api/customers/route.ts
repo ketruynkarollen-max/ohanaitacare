@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Clientes
  * GET  → lista clientes (opcional: busca por nome, telefone ou email)

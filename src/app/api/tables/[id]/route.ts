@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Mesa específica - PATCH para reservar/liberar
  */

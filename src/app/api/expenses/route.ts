@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Despesas
  * GET  → lista despesas (filtro por período)

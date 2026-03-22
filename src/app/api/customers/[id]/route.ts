@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de um Cliente específico
  * GET   → detalhes do cliente

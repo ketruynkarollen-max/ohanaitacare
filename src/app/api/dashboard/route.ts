@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API do Dashboard - métricas resumidas
  */

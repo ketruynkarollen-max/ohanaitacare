@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Relatórios de Vendas
  * GET → métricas agregadas (total, pedidos, por período)

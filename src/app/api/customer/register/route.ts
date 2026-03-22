@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * Cadastro de cliente da loja (email + senha)
  */

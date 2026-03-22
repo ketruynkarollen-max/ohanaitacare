@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Movimentações de Estoque
  * GET  → lista movimentações (opcional: productId)

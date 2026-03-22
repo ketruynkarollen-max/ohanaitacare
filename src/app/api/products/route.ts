@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Produtos
  * GET  → lista produtos (opcional: filtrar por categoryId)

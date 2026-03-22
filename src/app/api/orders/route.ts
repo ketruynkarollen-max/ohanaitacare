@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Pedidos
  * GET  → lista pedidos (filtros opcionais)

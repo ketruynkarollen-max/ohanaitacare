@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Categorias
  * GET  → lista todas as categorias (ordenadas por position)

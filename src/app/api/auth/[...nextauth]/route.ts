@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import NextAuth from "next-auth"
 import { customerAuthOptions } from "@/lib/auth-customer"
 

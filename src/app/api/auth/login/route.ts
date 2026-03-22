@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Login - POST { email, password }
  */

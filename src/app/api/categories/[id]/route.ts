@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de uma Categoria específica
  * PATCH  → atualiza a categoria

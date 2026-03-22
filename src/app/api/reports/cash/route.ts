@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * API de Caixa do Dia
  * GET → resumo financeiro por dia (total pago, por forma de pagamento)
