@@ -72,7 +72,8 @@ export default function HomePage() {
     fetch("/api/dashboard", { cache: "no-store" })
       .then((res) => res.json())
       .then((d) => {
-        setData(d)
+        if (d && !d.error) setData(d)
+        else setData(null)
         setLoading(false)
         setLastUpdated(new Date())
       })
